@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="نور التلاوة">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link rel="apple-touch-icon" href="icon.svg">
+
+    <title>نور التلاوة</title>
+
+    <!--
+        ================================================
+        بوابة جولة التعريف (tour.html)
+        ================================================
+        لازم تفضل هنا في أول <head> وقبل أي CSS أو JS تاني،
+        عشان لو المستخدم ده أول مرة يفتح التطبيق نحوّله على
+        صفحة الجولة قبل ما الصفحة الرئيسية تبدأ ترسم أصلاً
+        (من غير أي "وميض" للواجهة).
+
+        بنستخدم localStorage عشان القيمة تفضل متخزنة حتى بعد
+        قفل التطبيق أو إعادة تشغيل الموبايل. يعني الجولة
+        بتتعرض مرة واحدة بس على الجهاز ده.
+
+        لو حبيت تعرض الجولة تاني بعد تحديث كبير، غيّر رقم
+        النسخة في المفتاح (v1 -> v2) في الملفين
+        index.html و tour.html مع بعض.
+    -->
+    <script>
+        (function () {
+            var TOUR_KEY = "noorTelawaTourSeen_v1";
+
+            try {
+                /*
+                    ?skipTour=1 في الرابط بيعدّي الجولة من غير
+                    ما يخزن حاجة (مفيد وإنت بتجرب).
+                */
+                if (location.search.indexOf("skipTour=1") !== -1) {
+                    return;
+                }
+
+                if (!localStorage.getItem(TOUR_KEY)) {
+                    /*
+                        replace مش href: عشان زرار "رجوع" في
+                        الموبايل ميرجعش المستخدم للجولة تاني.
+                    */
+                    location.replace("./tour.html");
+                }
+            } catch (error) {
+                /*
+                    لو localStorage مقفول (تصفح خاص مثلاً)
+                    منعملش حاجة ونكمل للتطبيق عادي.
+                */
+            }
+        })();
+    </script>
+
+    <meta name="theme-color" content="#0a100f">
+
+    <link rel="manifest" href="manifest.json">
+
+    <!--
+        خطوط التطبيق:
+        قبل كده الخط "Amiri" كان متكتوب في الـ CSS بس مكنش
+        متحمّل من أي مكان، فكل موبايل كان بيبني بالخط اللي
+        عنده هو بس. ده اللي كان بيخلي شكل الخط يختلف من
+        جهاز لجهاز، وبيخلي رموز المصحف (علامات الوقف والتجويد)
+        تظهر كمربعات فاضية □ لو الخط البديل في الجهاز مش
+        داعمها.
+        دلوقتي بنحمّل نفس ملفات الخط لكل الأجهزة:
+        - Cairo: لواجهة التطبيق العادية (عناوين، أزرار، نصوص).
+        - Amiri Quran: مصمم خصيصًا لكتابة المصحف ويدعم كل
+          علامات الوقف والتجويد، وده اللي هيحل مشكلة المربعات.
+        - Amiri: احتياطي إضافي لو حرف مش موجود في Amiri Quran.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap&subset=arabic">
+
+    <link rel="stylesheet" href="style.css">
+
+    <!--
+        ستايلات المميزات الجديدة. ملف منفصل عمدًا عن style.css
+        عشان أي حاجة قديمة ما تتأثرش، ولازم يفضل *بعد* style.css.
+    -->
+    <link rel="stylesheet" href="features.css">
+
+    <!-- تجهيز الاتصال مبكرًا بخادم بث الإذاعة لتقليل تأخير بدء التشغيل -->
+    <link rel="preconnect" href="https://n0d.radiojar.com" crossorigin>
+    <link rel="dns-prefetch" href="https://n0d.radiojar.com">
+</head>
+
+<div class="salawat-reminder" id="salawatReminder">
+    <span class="salawat-icon">♡</span>
+    <span>اللهم صل وسلم وبارك على نبينا محمد</span>
+    <span class="salawat-heart">❤</span>
+</div>
+    
+<body>
+
+    <!-- ================================
+         NAVBAR
+    ================================= -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <a href="#home" class="logo">
+                <span class="logo-icon">☪</span>
+
+                <div>
+                    <strong>نور التلاوة</strong>
+                    <small>القرآن الكريم</small>
+                </div>
+            </a>
+
+            <nav class="nav-links">
+
+                <a href="#home" class="nav-link active">
+                    <span>⌂</span>
+                    الرئيسية
+                </a>
+
+                <a href="#listen" class="nav-link">
+                    <span>🎧</span>
+                    الاستماع
+                </a>
+
+                <a href="#mushaf" class="nav-link">
+                    <span>📖</span>
+                    المصحف
+                </a>
+
+                <a href="#readers" class="nav-link">
+                    <span>🎙️</span>
+                    القراء
+                </a>
+
+                <a href="#videos" class="nav-link">
+                    <span>📚</span>
+                    قصص الأنبياء
+                </a>
+
+                <a href="#sunnah" class="nav-link">
+                    <span>🕋</span>
+                    سنن النبي
+                </a>
+
+                <a href="#adhkar" class="nav-link">
+                    <span>📿</span>
+                    الأذكار
+                </a>
+
+                <a href="#radio" class="nav-link">
+                    <span>📻</span>
+                    الإذاعة
+                </a>
+
+                <a href="#prayer-times" class="nav-link">
+                    <span>🕌</span>
+                    مواقيت الصلاة
+                </a>
+
+            </nav>
+
+            <button class="theme-toggle-btn" id="themeToggleBtn" type="button" title="التبديل إلى الوضع النهاري">
+                <span id="themeToggleIcon">🌙</span>
+            </button>
+
+            <button class="settings-btn" id="settingsBtn" title="إعدادات الميكروفون">
+                ⚙️
+            </button>
+
+            <button class="install-btn hidden" id="installBtn" type="button">
+                📲 تثبيت التطبيق
+            </button>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                ☰
+            </button>
+
+        </div>
+
+        <div class="mobile-nav" id="mobileNav">
+
+            <a href="#home">⌂ الرئيسية</a>
+            <a href="#listen">🎧 الاستماع</a>
+            <a href="#mushaf">📖 المصحف</a>
+            <a href="#readers">🎙️ القراء</a>
+            <a href="#videos">📚 قصص الأنبياء</a>
+            <a href="#sunnah">🕋 سنن النبي</a>
+            <a href="#adhkar">📿 الأذكار</a>
+            <a href="#radio">📻 الإذاعة</a>
+            <a href="#prayer-times">🕌 مواقيت الصلاة</a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================================
+         MAIN
+    ================================= -->
+
+    <main>
+
+        <!-- ================================
+             HOME
+        ================================= -->
+
+        <section class="hero-section" id="home">
+
+            <div class="hero-container">
+
+                <div class="hero-content">
+
+                    <span class="bismillah">
+                        بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+                    </span>
+
+                    <h1>
+                        استمع إلى <span>القرآن الكريم</span>
+                    </h1>
+
+                    <p>
+                        اختر القارئ والسورة، أو استخدم الأمر الصوتي
+                        للاستماع إلى القرآن الكريم وقراءة المصحف في نفس الوقت.
+                    </p>
+
+                    <div class="hero-buttons">
+
+                        <a
+                            href="#listen"
+                            class="primary-btn"
+                            style="font-size: 20px; font-weight: bold;">
+                            ابدأ الاستماع
+                        </a>
+
+                        <a
+                            href="#mushaf"
+                            class="secondary-btn"
+                            style="font-size: 20px; font-weight: bold;">
+                            المصحف الشريف
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="hero-decoration">
+
+                    <div class="quran-circle">
+                        📖
+                    </div>
+
+                    <div class="decor-star star-1">✦</div>
+                    <div class="decor-star star-2">✧</div>
+                    <div class="decor-star star-3">✦</div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             LISTEN
+        ================================= -->
+
+        <section class="section" id="listen">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span>🎧</span>
+
+                    <div>
+                        <h2>الاستماع إلى القرآن</h2>
+
+                        <p>
+                            اختر القارئ والسورة واستمع مباشرة
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <!-- Voice Command -->
+
+                <div class="voice-card">
+
+                    <div class="voice-icon" id="voiceIcon">
+                        🎙️
+                    </div>
+
+                    <div class="voice-content">
+
+                        <h3>
+                            التحكم الصوتي
+                        </h3>
+
+                        <p id="voiceStatus">
+                            اضغط على الميكروفون وتحدث
+                        </p>
+
+                        <button class="voice-btn" id="voiceBtn">
+                            <span>🎙️ تحدث الآن</span>
+                        </button>
+
+                        <div class="example-command">
+
+                            مثال:
+
+                            <strong>
+                                "شغل وليد الشمسان سورة الواقعة من الآية 4"
+                            </strong>
+
+                        </div>
+
+                        <!--
+                            بديل نصي عن الأمر الصوتي: التعرف على الصوت
+                            نفسه محتاج إنترنت من المتصفح، لكن كتابة نفس
+                            الأمر هنا بتشتغل بنفس المحرك ومن غير نت خالص.
+                        -->
+                        <div class="search-box command-box">
+
+                            <input
+                                type="text"
+                                id="commandInput"
+                                placeholder="أو اكتب نفس الأمر هنا (يشتغل من غير نت)">
+
+                            <button
+                                id="commandInputBtn"
+                                title="نفّذ الأمر">
+                                ▶
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Search -->
+
+                <div class="search-section">
+
+                    <div class="search-title">
+
+                        <h3>البحث</h3>
+
+                        <p>
+                            ابحث عن قارئ أو سورة
+                        </p>
+
+                    </div>
+
+                    <div class="search-box">
+
+                        <input
+                            type="text"
+                            id="searchInput"
+                            placeholder="مثال: ماهر أو البقرة">
+
+                        <button id="searchBtn">
+                            🔎
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Quick Selection -->
+
+                <div class="selection-layout">
+
+                    <!-- Reader -->
+
+                    <div class="selection-card">
+
+                        <div class="card-heading">
+
+                            <div>
+
+                                <span>☪</span>
+
+                                <div>
+
+                                    <h3>اختر القارئ</h3>
+
+                                    <small id="selectedReaderLabel">
+                                        لم يتم اختيار قارئ
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="mini-grid readers-grid"
+                            id="readersGrid">
+                        </div>
+
+                        <button
+                            class="show-more-btn"
+                            id="showAllReaders">
+                            عرض كل القراء
+                        </button>
+
+                    </div>
+
+
+                    <!-- Surah -->
+
+                    <div class="selection-card">
+
+                        <div class="card-heading">
+
+                            <div>
+
+                                <span>📖</span>
+
+                                <div>
+
+                                    <h3>اختر السورة</h3>
+
+                                    <small id="selectedSurahLabel">
+                                        لم يتم اختيار سورة
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="mini-grid surahs-grid"
+                            id="surahsGrid">
+                        </div>
+
+                        <button
+                            class="show-more-btn"
+                            id="showAllSurahs">
+                            عرض كل السور
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Main Listen Button -->
+
+                <div class="listen-action">
+
+                    <button
+                        class="big-play-btn"
+                        id="listenAndReadBtn"
+                        style="font-size: 20px; font-weight: bold;">
+                        قراءة واستماع مع الشيخ
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             MUSHAF
+        ================================= -->
+
+        <section class="mushaf-section" id="mushaf">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span>📖</span>
+
+                    <div>
+
+                        <h2>المصحف الشريف</h2>
+
+                        <p>
+                            اقرأ القرآن واختر القارئ إذا أردت الاستماع
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Mushaf Controls -->
+
+                <div class="mushaf-controls">
+
+                    <div class="control-group">
+
+                        <label>
+                            السورة
+                        </label>
+
+                        <select id="mushafSurahSelect">
+
+                            <option value="">
+                                اختر السورة
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="control-group">
+
+                        <label>
+                            القارئ
+                        </label>
+
+                        <select id="mushafReaderSelect">
+
+                            <option value="">
+                                بدون قارئ
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="mushaf-actions">
+
+                        <button
+                            class="read-btn"
+                            id="readOnlyBtn"
+                            style="font-size: 18px; font-weight: bold;">
+                            قراءة فقط
+                        </button>
+
+                        <button
+                            class="listen-mushaf-btn"
+                            id="listenWithReaderBtn"
+                            style="font-size: 18px; font-weight: bold;">
+                            قراءة مع الشيخ
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Current Surah -->
+
+                <div
+                    class="mushaf-header"
+                    id="mushafHeader">
+
+                    <span>
+                        سورة
+                    </span>
+
+                    <h2 id="mushafTitle">
+                        اختر سورة
+                    </h2>
+
+                    <small id="mushafSubtitle">
+                        المصحف الشريف
+                    </small>
+
+                </div>
+
+                <p
+                    class="highlight-status"
+                    id="highlightStatus">
+                    سيظهر تمييز الآية أثناء تشغيل التلاوة
+                </p>
+
+
+                <!-- Loading -->
+
+                <div
+                    class="mushaf-loading hidden"
+                    id="mushafLoading">
+
+                    <div class="loader"></div>
+
+                    <p>
+                        جاري تحميل السورة...
+                    </p>
+
+                </div>
+
+
+                <!-- Quran -->
+
+                <article
+                    class="mushaf-page"
+                    id="mushafPage">
+
+                    <div class="empty-mushaf">
+
+                        <div>
+                            📖
+                        </div>
+
+                        <h3>
+                            ابدأ القراءة
+                        </h3>
+
+                        <p>
+                            اختر سورة من القائمة لفتح المصحف
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Mushaf Navigation -->
+
+                <div class="mushaf-navigation">
+
+                    <button id="mushafPreviousBtn">
+                        → السورة السابقة
+                    </button>
+
+                    <span id="mushafCounter">
+                        -
+                    </span>
+
+                    <button id="mushafNextBtn">
+                        السورة التالية ←
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             READERS
+        ================================= -->
+
+        <section
+            class="section readers-section"
+            id="readers">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span>🎙️</span>
+
+                    <div>
+
+                        <h2>قراء القرآن</h2>
+
+                        <p>
+                            اختر القارئ المفضل لديك
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="all-readers-grid"
+                    id="allReadersGrid">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             PROPHETS STORIES
+        ================================= -->
+
+        <section
+            class="section media-section"
+            id="videos">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span>📚</span>
+
+                    <div>
+
+                        <h2>قصص الأنبياء</h2>
+
+                        <p>
+                            نبذة مختصرة عن الأنبياء المذكورين في القرآن الكريم
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="carousel" id="prophetsCarousel">
+
+                    <button class="carousel-arrow prev" type="button" aria-label="النبي السابق">›</button>
+
+                    <div class="carousel-viewport">
+                        <div class="carousel-track">
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">آدم</div>
+                        <div class="media-card-content">
+                            <h3>آدم عليه السلام</h3>
+                            <p>
+                                أول البشر وأبو الأنبياء، خلقه الله وأسكنه الجنة،
+                                ثم تاب عليه وعلّمه طريق الهداية.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">إدريس</div>
+                        <div class="media-card-content">
+                            <h3>إدريس عليه السلام</h3>
+                            <p>
+                                نبي صديق، وصفه الله بالصبر والصدق ورفعة المكانة.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">نوح</div>
+                        <div class="media-card-content">
+                            <h3>نوح عليه السلام</h3>
+                            <p>
+                                دعا قومه إلى التوحيد زمناً طويلاً،
+                                فأنجاه الله ومن آمن معه في السفينة.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">هود</div>
+                        <div class="media-card-content">
+                            <h3>هود عليه السلام</h3>
+                            <p>
+                                أُرسل إلى عاد، ودعاهم إلى عبادة الله وترك الكبر،
+                                فنجاه الله مع المؤمنين.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">صالح</div>
+                        <div class="media-card-content">
+                            <h3>صالح عليه السلام</h3>
+                            <p>
+                                أُرسل إلى ثمود، وأيده الله بالناقة آية،
+                                ودعا قومه إلى الإيمان والطاعة.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">إبراهيم</div>
+                        <div class="media-card-content">
+                            <h3>إبراهيم عليه السلام</h3>
+                            <p>
+                                خليل الله وإمام الموحدين، حطّم الأصنام،
+                                ورفع قواعد الكعبة مع ابنه إسماعيل.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">لوط</div>
+                        <div class="media-card-content">
+                            <h3>لوط عليه السلام</h3>
+                            <p>
+                                دعا قومه إلى الطهارة وترك الفواحش،
+                                فنجاه الله وأهله المؤمنين من العذاب.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">إسماعيل</div>
+                        <div class="media-card-content">
+                            <h3>إسماعيل عليه السلام</h3>
+                            <p>
+                                كان صادق الوعد صابراً،
+                                وشارك أباه إبراهيم في بناء الكعبة المشرفة.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">إسحاق</div>
+                        <div class="media-card-content">
+                            <h3>إسحاق عليه السلام</h3>
+                            <p>
+                                بشر الله به إبراهيم، وكان نبياً صالحاً
+                                ومن ذريته أنبياء بني إسرائيل.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">يعقوب</div>
+                        <div class="media-card-content">
+                            <h3>يعقوب عليه السلام</h3>
+                            <p>
+                                إسرائيل، والد يوسف وإخوته،
+                                عُرف بالصبر الجميل والثقة برحمة الله.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">يوسف</div>
+                        <div class="media-card-content">
+                            <h3>يوسف عليه السلام</h3>
+                            <p>
+                                ابتُلي بالحسد والسجن ثم مكّنه الله،
+                                فعفا عن إخوته وكان مثالاً للعفة والصبر.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">أيوب</div>
+                        <div class="media-card-content">
+                            <h3>أيوب عليه السلام</h3>
+                            <p>
+                                ضرب أروع الأمثلة في الصبر على البلاء،
+                                فكشف الله ضره وردّ عليه نعمته.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">شعيب</div>
+                        <div class="media-card-content">
+                            <h3>شعيب عليه السلام</h3>
+                            <p>
+                                دعا مدين إلى التوحيد والعدل،
+                                ونهاهم عن التطفيف في الميزان والغش في المعاملات.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">موسى</div>
+                        <div class="media-card-content">
+                            <h3>موسى عليه السلام</h3>
+                            <p>
+                                كليم الله، أرسله الله إلى فرعون،
+                                وأنقذ به بني إسرائيل وأيده بالآيات البينات.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">هارون</div>
+                        <div class="media-card-content">
+                            <h3>هارون عليه السلام</h3>
+                            <p>
+                                أخ موسى ووزيره، أرسله الله معه ليعينه
+                                في دعوة فرعون وقومه إلى الحق.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">داود</div>
+                        <div class="media-card-content">
+                            <h3>داود عليه السلام</h3>
+                            <p>
+                                نبي وملك آتاه الله الحكمة والزبور،
+                                وكان كثير العبادة حسن التوبة.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">سليمان</div>
+                        <div class="media-card-content">
+                            <h3>سليمان عليه السلام</h3>
+                            <p>
+                                ملك نبي سخّر الله له الريح والجن،
+                                وشكر ربه على نعمه وعدله بين الناس.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">إلياس</div>
+                        <div class="media-card-content">
+                            <h3>إلياس عليه السلام</h3>
+                            <p>
+                                دعا قومه إلى عبادة الله وحده وترك عبادة بعل،
+                                وكان من عباد الله الصالحين.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">اليسع</div>
+                        <div class="media-card-content">
+                            <h3>اليسع عليه السلام</h3>
+                            <p>
+                                نبي من أنبياء بني إسرائيل،
+                                وصفه الله بأنه من الأخيار الفاضلين.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">ذو الكفل</div>
+                        <div class="media-card-content">
+                            <h3>ذو الكفل عليه السلام</h3>
+                            <p>
+                                ذكره الله في الصابرين والأخيار،
+                                وكان مثالاً في الوفاء وتحمل المسؤولية.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">يونس</div>
+                        <div class="media-card-content">
+                            <h3>يونس عليه السلام</h3>
+                            <p>
+                                ابتلعه الحوت، فنادى ربه في الظلمات،
+                                فاستجاب الله له ونجاه برحمته.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">زكريا</div>
+                        <div class="media-card-content">
+                            <h3>زكريا عليه السلام</h3>
+                            <p>
+                                دعا ربه سراً، فبشره الله بيحيى،
+                                وكان مثالاً في الدعاء والرجاء.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">يحيى</div>
+                        <div class="media-card-content">
+                            <h3>يحيى عليه السلام</h3>
+                            <p>
+                                آتاه الله الحكم صبياً، وكان تقياً باراً بوالديه
+                                ولم يكن جباراً عصياً.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">عيسى</div>
+                        <div class="media-card-content">
+                            <h3>عيسى عليه السلام</h3>
+                            <p>
+                                كلمة الله إلى مريم، أيده الله بالمعجزات،
+                                ودعا بني إسرائيل إلى عبادة الله.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card prophet-card">
+                        <div class="prophet-icon">محمد</div>
+                        <div class="media-card-content">
+                            <h3>محمد صلى الله عليه وسلم</h3>
+                            <p>
+                                خاتم الأنبياء والمرسلين،
+                                أرسله الله رحمة للعالمين وأنزل عليه القرآن الكريم.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                        </div>
+                    </div>
+
+                    <button class="carousel-arrow next" type="button" aria-label="النبي التالي">‹</button>
+
+                </div>
+
+                <div class="carousel-dots" id="prophetsDots"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             SUNNAH GALLERY
+        ================================= -->
+
+        <section
+            class="section media-section"
+            id="sunnah">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span>🕋</span>
+
+                    <div>
+
+                        <h2>من سنن النبي ﷺ</h2>
+
+                        <p>
+                            سنن يومية بسيطة من هدي النبي صلى الله عليه وسلم، تُغتنم بأجرها في كل وقت
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="carousel" id="sunnahCarousel">
+
+                    <button class="carousel-arrow prev" type="button" aria-label="السنة السابقة">›</button>
+
+                    <div class="carousel-viewport">
+                        <div class="carousel-track">
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🕋</div>
+                        <div class="media-card-content">
+                            <h3>السواك</h3>
+                            <p>
+                                كان صلى الله عليه وسلم يستاك عند كل وضوء وعند الاستيقاظ من النوم،
+                                وقال: "السواك مطهرة للفم مرضاة للرب".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🤲</div>
+                        <div class="media-card-content">
+                            <h3>البدء باليمين</h3>
+                            <p>
+                                كان يحب التيمن في كل شأنه: في لبسه ونعله وطهوره،
+                                وفي الأكل والشرب والمصافحة.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🍽️</div>
+                        <div class="media-card-content">
+                            <h3>التسمية والأكل باليمين</h3>
+                            <p>
+                                كان يعلّم: "سمِّ الله، وكُل بيمينك، وكُل مما يليك"،
+                                وكان لا يعيب طعامًا قط.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🚪</div>
+                        <div class="media-card-content">
+                            <h3>دعاء دخول المنزل والخروج منه</h3>
+                            <p>
+                                عند الدخول: "بسم الله ولجنا وبسم الله خرجنا، وعلى ربنا توكلنا"،
+                                وعند الخروج: "بسم الله، توكلت على الله".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🕌</div>
+                        <div class="media-card-content">
+                            <h3>الرِّفق بتقديم الرجل اليمنى للمسجد</h3>
+                            <p>
+                                كان يقدّم رجله اليمنى عند دخول المسجد ويقول: "اللهم افتح لي أبواب رحمتك"،
+                                واليسرى عند الخروج ويقول: "اللهم إني أسألك من فضلك".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🌙</div>
+                        <div class="media-card-content">
+                            <h3>النوم على الجانب الأيمن</h3>
+                            <p>
+                                كان ينام على شقه الأيمن ويضع يده تحت خده،
+                                ويقول: "باسمك ربي وضعت جنبي، وبك أرفعه".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🤧</div>
+                        <div class="media-card-content">
+                            <h3>تشميت العاطس</h3>
+                            <p>
+                                إذا عطس أحدهم وحمد الله، كان يقول له: "يرحمك الله"،
+                                فيرد العاطس: "يهديكم الله ويصلح بالكم".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">☀️</div>
+                        <div class="media-card-content">
+                            <h3>إفشاء السلام</h3>
+                            <p>
+                                كان يوصي: "أفشوا السلام بينكم"، ويلقيه على من يعرف ومن لا يعرف،
+                                وكان يبدأ الصغير الكبير، والراكب الماشي.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">😊</div>
+                        <div class="media-card-content">
+                            <h3>التبسم</h3>
+                            <p>
+                                قال جرير بن عبد الله: "ما حجبني رسول الله ﷺ منذ أسلمت،
+                                ولا رآني إلا تبسّم في وجهي".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🌳</div>
+                        <div class="media-card-content">
+                            <h3>الصدقة الجارية والغرس</h3>
+                            <p>
+                                قال: "ما من مسلم يغرس غرسًا أو يزرع زرعًا، فيأكل منه طير أو إنسان أو بهيمة
+                                إلا كان له به صدقة".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🚶</div>
+                        <div class="media-card-content">
+                            <h3>إماطة الأذى عن الطريق</h3>
+                            <p>
+                                قال: "لقد رأيت رجلًا يتقلب في الجنة في شجرة قطعها من ظهر الطريق كانت تؤذي الناس".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🧴</div>
+                        <div class="media-card-content">
+                            <h3>الطيب وحسن الهيئة</h3>
+                            <p>
+                                كان يحب الطيب ولا يرده إذا أُهدي له،
+                                وكان يهتم بنظافة ثوبه وهيئته عند لقاء الناس.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🍯</div>
+                        <div class="media-card-content">
+                            <h3>عدم الإسراف في الطعام</h3>
+                            <p>
+                                قال: "ما ملأ آدميٌّ وعاءً شرًّا من بطن، بحسب ابن آدم أُكلاتٌ يُقمن صلبه".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">👪</div>
+                        <div class="media-card-content">
+                            <h3>صلة الرحم وبر الوالدين</h3>
+                            <p>
+                                قال: "من أحب أن يُبسط له في رزقه، ويُنسأ له في أثره، فليصل رحمه".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🕋</div>
+                        <div class="media-card-content">
+                            <h3>صيام الاثنين والخميس</h3>
+                            <p>
+                                كان يتحرى صيام الاثنين والخميس، وقال:
+                                "تُعرض الأعمال يوم الاثنين والخميس، فأحب أن يُعرض عملي وأنا صائم".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🌅</div>
+                        <div class="media-card-content">
+                            <h3>الوتر قبل النوم</h3>
+                            <p>
+                                كان يوصي: "أوتروا قبل أن تصبحوا"، وأوصى بألا ينام أحد إلا وقد أوتر.
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">💧</div>
+                        <div class="media-card-content">
+                            <h3>الشرب على ثلاث دفعات جالسًا</h3>
+                            <p>
+                                كان يتنفس خارج الإناء ثلاث مرات عند الشرب، ونهى عن الشرب واقفًا،
+                                وقال: "هو أهنأ وأمرأ".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🕰️</div>
+                        <div class="media-card-content">
+                            <h3>الوضوء قبل النوم</h3>
+                            <p>
+                                كان يوصي: "إذا أتيت مضجعك فتوضأ وضوءك للصلاة، ثم اضطجع على شقك الأيمن".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                    <div class="carousel-slide">
+<article class="media-card sunnah-card">
+                        <div class="sunnah-icon">🙏</div>
+                        <div class="media-card-content">
+                            <h3>الدعاء عند لبس الثوب الجديد</h3>
+                            <p>
+                                كان يقول: "اللهم لك الحمد أنت كسوتنيه، أسألك من خيره وخير ما صُنع له،
+                                وأعوذ بك من شره وشر ما صُنع له".
+                            </p>
+                        </div>
+                    </article>
+</div>
+
+                        </div>
+                    </div>
+
+                    <button class="carousel-arrow next" type="button" aria-label="السنة التالية">‹</button>
+
+                </div>
+
+                <div class="carousel-dots" id="sunnahDots"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             ADHKAR
+        ================================= -->
+
+        <section class="section adhkar-section" id="adhkar">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span>📿</span>
+
+                    <div>
+
+                        <h2>الأذكار</h2>
+
+                        <p>
+                            أذكار الصباح والمساء والنوم وبعد الصلاة من هدي النبي صلى الله عليه وسلم
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="adhkar-tabs" id="adhkarTabs" role="tablist">
+
+                    <button
+                        class="adhkar-tab-btn active"
+                        type="button"
+                        data-target="adhkar-morning">
+                        🌅 أذكار الصباح
+                    </button>
+
+                    <button
+                        class="adhkar-tab-btn"
+                        type="button"
+                        data-target="adhkar-evening">
+                        🌇 أذكار المساء
+                    </button>
+
+                    <button
+                        class="adhkar-tab-btn"
+                        type="button"
+                        data-target="adhkar-sleep">
+                        🌙 أذكار النوم
+                    </button>
+
+                    <button
+                        class="adhkar-tab-btn"
+                        type="button"
+                        data-target="adhkar-prayer">
+                        🕌 أذكار بعد الصلاة
+                    </button>
+
+                </div>
+
+
+                <!-- Morning -->
+                <div class="adhkar-panel active" id="adhkar-morning">
+                    <div class="adhkar-list">
+
+                        <div class="adhkar-item">
+                            <p>
+                                أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ،
+                                لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ.
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ.
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ،
+                                أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ
+                                (سيد الاستغفار).
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ، وَهُوَ السَّمِيعُ الْعَلِيمُ.
+                            </p>
+                            <span class="adhkar-count">3 مرات</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا.
+                            </p>
+                            <span class="adhkar-count">3 مرات</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ.
+                            </p>
+                            <span class="adhkar-count">7 مرات</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                سُبْحَانَ اللَّهِ وَبِحَمْدِهِ.
+                            </p>
+                            <span class="adhkar-count">100 مرة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ.
+                            </p>
+                            <span class="adhkar-count">10 مرات</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ.
+                            </p>
+                            <span class="adhkar-count">3 مرات</span>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- Evening -->
+                <div class="adhkar-panel" id="adhkar-evening">
+                    <div class="adhkar-list">
+
+                        <div class="adhkar-item">
+                            <p>
+                                أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ،
+                                لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ.
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ.
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ،
+                                أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ
+                                (سيد الاستغفار).
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ، وَهُوَ السَّمِيعُ الْعَلِيمُ.
+                            </p>
+                            <span class="adhkar-count">3 مرات</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا.
+                            </p>
+                            <span class="adhkar-count">3 مرات</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                اللَّهُمَّ إِنِّي أَمْسَيْتُ أُشْهِدُكَ، وَأُشْهِدُ حَمَلَةَ عَرْشِكَ، وَمَلَائِكَتَكَ، وَجَمِيعَ خَلْقِكَ،
+                                أَنَّكَ أَنْتَ اللَّهُ لَا إِلَهَ إِلَّا أَنْتَ، وَأَنَّ مُحَمَّدًا عَبْدُكَ وَرَسُولُكَ.
+                            </p>
+                            <span class="adhkar-count">4 مرات</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                سُبْحَانَ اللَّهِ وَبِحَمْدِهِ.
+                            </p>
+                            <span class="adhkar-count">100 مرة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ.
+                            </p>
+                            <span class="adhkar-count">3 مرات</span>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- Sleep -->
+                <div class="adhkar-panel" id="adhkar-sleep">
+                    <div class="adhkar-list">
+
+                        <div class="adhkar-item">
+                            <p>
+                                بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا.
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ.
+                            </p>
+                            <span class="adhkar-count">3 مرات</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                آية الكرسي: اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ، لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ...
+                                (من قرأها حين يأوي إلى فراشه لم يزل عليه من الله حافظ ولا يقربه شيطان حتى يصبح).
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                قُلْ هُوَ اللَّهُ أَحَدٌ، وقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، وقُلْ أَعُوذُ بِرَبِّ النَّاسِ
+                                (مع النفث في الكفين ومسح الجسد بهما).
+                            </p>
+                            <span class="adhkar-count">3 مرات</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                سُبْحَانَ اللَّهِ.
+                            </p>
+                            <span class="adhkar-count">33 مرة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                الْحَمْدُ لِلَّهِ.
+                            </p>
+                            <span class="adhkar-count">33 مرة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                اللَّهُ أَكْبَرُ.
+                            </p>
+                            <span class="adhkar-count">34 مرة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ وَرَبَّ الْعَرْشِ الْعَظِيمِ، رَبَّنَا وَرَبَّ كُلِّ شَيْءٍ...
+                                اِقْضِ عَنَّا الدَّيْنَ وَأَغْنِنَا مِنَ الْفَقْرِ.
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- After prayer -->
+                <div class="adhkar-panel" id="adhkar-prayer">
+                    <div class="adhkar-list">
+
+                        <div class="adhkar-item">
+                            <p>
+                                أَسْتَغْفِرُ اللَّهَ (ثلاثًا)، اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ.
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ،
+                                اللَّهُمَّ لَا مَانِعَ لِمَا أَعْطَيْتَ، وَلَا مُعْطِيَ لِمَا مَنَعْتَ، وَلَا يَنْفَعُ ذَا الْجَدِّ مِنْكَ الْجَدُّ.
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                سُبْحَانَ اللَّهِ.
+                            </p>
+                            <span class="adhkar-count">33 مرة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                الْحَمْدُ لِلَّهِ.
+                            </p>
+                            <span class="adhkar-count">33 مرة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                اللَّهُ أَكْبَرُ.
+                            </p>
+                            <span class="adhkar-count">33 مرة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ
+                                (تكملة المائة).
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                آية الكرسي: اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...
+                                (من قرأها دبر كل صلاة مكتوبة لم يمنعه من دخول الجنة إلا أن يموت).
+                            </p>
+                            <span class="adhkar-count">مرة واحدة</span>
+                        </div>
+
+                        <div class="adhkar-item">
+                            <p>
+                                قُلْ هُوَ اللَّهُ أَحَدٌ، وقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، وقُلْ أَعُوذُ بِرَبِّ النَّاسِ.
+                            </p>
+                            <span class="adhkar-count">مرة واحدة (3 مرات بعد الفجر والمغرب)</span>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             PRAYER TIMES
+        ================================= -->
+
+        <section
+            class="section prayer-section"
+            id="prayer-times">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span>🕌</span>
+
+                    <div>
+
+                        <h2>مواقيت الصلاة</h2>
+
+                        <p>
+                            اعرف مواقيت الصلاة في مكانك ونبّهني قبلها بـ 30 و10 و5 دقائق، وساعة الأذان نفسه
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="prayer-card">
+
+                    <div class="prayer-location">
+
+                        <strong id="prayerLocation">
+                            لم يتم تحديد المكان
+                        </strong>
+
+                        <span id="prayerDate">
+                            اضغط لتحديد موقعك
+                        </span>
+
+                    </div>
+
+                    <button
+                        class="primary-btn prayer-location-btn"
+                        id="getPrayerTimesBtn"
+                        type="button">
+                        📍 تحديد موقعي
+                    </button>
+
+                    <div
+                        class="prayer-times-grid"
+                        id="prayerTimesGrid">
+
+                        <p class="prayer-empty">
+                            سيطلب التطبيق إذن الموقع مرة واحدة لحساب المواقيت بدقة.
+                        </p>
+
+                    </div>
+
+                    <div class="prayer-actions">
+
+                        <button
+                            class="secondary-btn"
+                            id="enablePrayerNotificationsBtn"
+                            type="button">
+                            🔔 تفعيل تنبيهات الصلاة
+                        </button>
+
+                        <small>
+                            هيوصلك تنبيه قبل كل صلاة بـ 30 و10 و5 دقائق، وتنبيه "حان الآن وقت الصلاة" مع الأذان.
+                            التنبيهات تعمل طول ما التطبيق شغّال (حتى في الخلفية)، وبتفضل شغالة أفضل لو ثبّت
+                            التطبيق على شاشتك الرئيسية بدل ما تفتحه من المتصفح كل مرة. إشعارات آيفون تحتاج
+                            تثبيت التطبيق من Safari أولاً ثم السماح بالإشعارات.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             RADIO
+        ================================= -->
+
+        <section
+            class="section radio-section"
+            id="radio">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span>📻</span>
+
+                    <div>
+
+                        <h2>الإذاعة الإسلامية</h2>
+
+                        <p>
+                            استمع إلى البث المباشر الحالي من الإذاعة
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="radio-card">
+
+                    <div class="radio-status">
+
+                        <span class="live-dot"></span>
+
+                        <span>
+                            يعمل الآن
+                        </span>
+
+                    </div>
+
+
+                    <div class="radio-cover">
+                        📻
+                    </div>
+
+
+                    <div class="radio-info">
+
+                        <h3 id="radioStationName">
+                            إذاعة القرآن الكريم
+                        </h3>
+
+                        <p id="radioStationStatus">
+                            البث المباشر متاح الآن
+                        </p>
+
+
+                        <!--
+                            مهم:
+                            تم إزالة الرابط القديم الذي يحتوي على
+                            rj-tok و rj-ttl لأنه Token مؤقت.
+                            سيتم وضع رابط البث من JavaScript.
+                        -->
+
+                        <audio
+                            id="radioAudio"
+                            controls
+                            preload="none"
+                            playsinline>
+                            متصفحك لا يدعم تشغيل الإذاعة.
+                        </audio>
+
+
+                        <small class="radio-help">
+                            على الموبايل اضغط زر التشغيل من مشغل الصوت بعد اختيار المحطة.
+                        </small>
+
+                    </div>
+
+
+                    <div
+                        class="radio-stations"
+                        aria-label="اختيار الإذاعة">
+
+                        <button
+                            class="radio-station active"
+                            type="button"
+                            data-name="إذاعة القرآن الكريم"
+                            data-stream="https://n0d.radiojar.com/8s5u5tpdtwzuv">
+
+                            إذاعة القرآن الكريم
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================================
+         AUDIO PLAYER
+    ================================= -->
+
+    <div
+        class="audio-player"
+        id="audioPlayer">
+
+        <div class="player-inner">
+
+            <div class="now-playing">
+
+                <div class="mini-cover" id="miniCover">
+                    📖
+                </div>
+
+                <div class="playing-info">
+
+                    <strong id="currentReader">
+                        لم يتم اختيار قارئ
+                    </strong>
+
+                    <span id="currentSurah">
+                        لم يتم اختيار سورة
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="player-controls">
+
+                <button
+                    id="previousBtn"
+                    title="السورة السابقة">
+                    ⏮
+                </button>
+
+                <button
+                    class="main-play"
+                    id="mainPlayBtn"
+                    title="تشغيل / إيقاف">
+                    ▶
+                </button>
+
+                <button
+                    id="nextBtn"
+                    title="السورة التالية">
+                    ⏭
+                </button>
+
+                <button
+                    id="repeatBtn"
+                    class="repeat-btn"
+                    title="تكرار الآية الحالية"
+                    aria-pressed="false">
+                    🔁
+                </button>
+
+                <button
+                    id="downloadReaderBtn"
+                    title="تنزيل كل سور هذا القارئ للاستماع بدون نت">
+                    ⬇️
+                </button>
+
+            </div>
+
+
+            <div class="volume-control">
+
+                <span>🔊</span>
+
+                <input
+                    type="range"
+                    id="volume"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="1">
+
+            </div>
+
+        </div>
+
+
+        <div class="player-progress">
+
+            <span
+                class="player-time"
+                id="playerCurrentTime">
+                00:00
+            </span>
+
+            <input
+                type="range"
+                class="player-seek"
+                id="playerSeek"
+                min="0"
+                max="100"
+                step="0.1"
+                value="0">
+
+            <span
+                class="player-time"
+                id="playerDuration">
+                00:00
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         MICROPHONE MODAL
+    ================================= -->
+
+    <div
+        class="modal hidden"
+        id="permissionModal">
+
+        <div class="modal-content">
+
+            <button
+                class="modal-close"
+                id="closeModalBtn">
+                ×
+            </button>
+
+            <div class="modal-icon">
+                🎙️
+            </div>
+
+            <h2>
+                التحكم الصوتي
+            </h2>
+
+            <p>
+                للسماح لـ نور التلاوة بفهم أوامرك الصوتية，
+                يحتاج الموقع إلى الوصول إلى الميكروفون.
+            </p>
+
+            <button
+                class="modal-primary-btn"
+                id="allowMicBtn">
+                السماح بالميكروفون
+            </button>
+
+            <button
+                class="modal-secondary-btn"
+                id="cancelModalBtn">
+                لاحقًا
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         AYAH READER PICKER MODAL
+    ================================= -->
+
+    <div
+        class="modal hidden"
+        id="ayahReaderPickerModal">
+
+        <div class="modal-content reader-picker-modal-content">
+
+            <button
+                class="modal-close"
+                id="ayahReaderPickerCloseBtn"
+                aria-label="إغلاق">
+                ×
+            </button>
+
+            <div class="modal-icon">
+                🎙️
+            </div>
+
+            <h2>
+                اختر صوت القارئ
+            </h2>
+
+            <p id="ayahReaderPickerSubtitle">
+                هيتم التشغيل بصوت القارئ اللي هتختاره
+            </p>
+
+            <div class="search-box reader-picker-search">
+
+                <input
+                    type="text"
+                    id="ayahReaderPickerSearch"
+                    placeholder="ابحث عن قارئ">
+
+                <button type="button" tabindex="-1">🔎</button>
+
+            </div>
+
+            <div
+                class="all-readers-grid reader-picker-grid"
+                id="ayahReaderPickerGrid">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         PROPHET DETAILS MODAL
+    ================================= -->
+
+    <div
+        class="modal hidden"
+        id="prophetDetailsModal">
+
+        <div class="modal-content prophet-details-modal-content">
+
+            <button
+                class="modal-close"
+                id="prophetDetailsCloseBtn"
+                aria-label="إغلاق">
+                ×
+            </button>
+
+            <div id="prophetDetailsContent"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         TOAST
+    ================================= -->
+
+    <div
+        class="toast"
+        id="toast">
+    </div>
+
+
+    <!-- ================================
+         JAVASCRIPT
+    ================================= -->
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+
+    <!--
+        طبقة المميزات الإضافية (العلامات، الورد اليومي، التفسير،
+        البحث، وضع الحفظ، السبحة، القبلة...).
+        لازم تفضل آخر واحدة، لأنها بتبني على المتغيرات والدوال
+        اللي في app.js.
+    -->
+    <script src="features.js"></script>
+
+</body>
+
+</html>
