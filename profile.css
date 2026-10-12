@@ -1,0 +1,579 @@
+/* =========================================================
+   PROFILE.CSS
+   =========================================================
+   زرار الصورة في النافبار، نافذة إنشاء البروفيل، وصفحة
+   الإحصائيات. كل الكلاسات nt-pf-*، ولازم يتحمّل بعد pages.css.
+========================================================= */
+
+/* ---------- زرار الصورة في النافبار ---------- */
+
+.nt-avatar-btn {
+    width: 38px;
+    height: 38px;
+    flex: none;
+
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+
+    background: var(--card-light);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+
+    color: var(--gold);
+    font-size: 16px;
+    font-weight: 800;
+    text-decoration: none;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.nt-avatar-btn:hover {
+    transform: scale(1.06);
+}
+
+.nt-avatar-btn img,
+.nt-pf-avatar img,
+.nt-pf-photo-view img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+@media (max-width: 650px) {
+
+    .nt-avatar-btn {
+        width: 34px;
+        height: 34px;
+    }
+
+}
+
+
+/* ---------- نافذة البروفيل ---------- */
+
+body.nt-pf-lock {
+    overflow: hidden;
+}
+
+.nt-pf-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 18px;
+    overflow-y: auto;
+
+    background: rgba(5, 9, 8, 0.82);
+    backdrop-filter: blur(6px);
+}
+
+.nt-pf-overlay[hidden] {
+    display: none;
+}
+
+.nt-pf-modal {
+    width: 100%;
+    max-width: 380px;
+    margin: auto;
+    padding: 28px 22px 22px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+}
+
+.nt-pf-mark {
+    font-size: 30px;
+    color: var(--gold);
+}
+
+.nt-pf-modal h3 {
+    margin: 6px 0 6px;
+    font-size: 20px;
+    color: var(--text);
+}
+
+.nt-pf-sub {
+    margin-bottom: 20px;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.8;
+}
+
+.nt-pf-photo {
+    position: relative;
+
+    width: 96px;
+    height: 96px;
+    padding: 0;
+
+    background: var(--card-light);
+    border: 2px dashed var(--gold);
+    border-radius: 50%;
+
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.nt-pf-photo-view {
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+
+    border-radius: 50%;
+}
+
+.nt-pf-photo-plus {
+    position: absolute;
+    bottom: -2px;
+    left: -2px;
+
+    width: 28px;
+    height: 28px;
+
+    display: grid;
+    place-items: center;
+
+    background: var(--green);
+    border: 2px solid var(--card);
+    border-radius: 50%;
+
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.nt-pf-photo-hint {
+    margin: 10px 0 18px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    color: var(--muted);
+    font-size: 12.5px;
+}
+
+.nt-pf-label {
+    align-self: stretch;
+    margin-bottom: 6px;
+
+    text-align: start;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.nt-pf-input {
+    width: 100%;
+    padding: 13px 14px;
+
+    background: var(--card-light);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+    text-align: start;
+
+    outline: none;
+}
+
+.nt-pf-input:focus {
+    border-color: var(--green);
+}
+
+.nt-pf-error {
+    min-height: 20px;
+    margin-top: 6px;
+
+    align-self: stretch;
+    text-align: start;
+    color: #e58686;
+    font-size: 12.5px;
+}
+
+.nt-pf-actions {
+    width: 100%;
+    margin-top: 8px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+
+/* ---------- أزرار ---------- */
+
+.nt-pf-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 12px 22px;
+
+    border: 1px solid transparent;
+    border-radius: 100px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.nt-pf-primary {
+    background: linear-gradient(135deg, var(--green), var(--green-dark));
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(76, 175, 125, 0.22);
+}
+
+.nt-pf-ghost {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--muted);
+}
+
+.nt-pf-ghost:hover {
+    color: var(--text);
+    border-color: var(--green);
+}
+
+.nt-pf-link {
+    background: none;
+    border: none;
+    padding: 4px 6px;
+
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 12.5px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+
+/* ---------- صفحة البروفيل ---------- */
+
+.nt-pf-wrap {
+    max-width: 680px;
+    margin-inline: auto;
+}
+
+.nt-pf-hero {
+    margin-bottom: 18px;
+    padding: 26px 18px 22px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+
+    background:
+        radial-gradient(circle at 50% 0%, rgba(213, 180, 106, 0.14), transparent 65%),
+        var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.nt-pf-avatar {
+    width: 104px;
+    height: 104px;
+    margin-bottom: 6px;
+
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+
+    background: var(--card-light);
+    border: 3px solid var(--gold);
+    border-radius: 50%;
+
+    color: var(--gold);
+    font-size: 40px;
+    font-weight: 800;
+}
+
+.nt-pf-hero h2 {
+    font-size: 22px;
+    color: var(--text);
+}
+
+.nt-pf-hero p {
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.nt-pf-tiles {
+    margin-bottom: 14px;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.nt-pf-tile {
+    padding: 14px 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-align: center;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+}
+
+.nt-pf-tile:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+}
+
+.nt-pf-tile span {
+    font-size: 20px;
+}
+
+.nt-pf-tile strong {
+    font-size: 17px;
+    color: var(--gold);
+}
+
+.nt-pf-tile small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.nt-pf-card {
+    margin-bottom: 14px;
+    padding: 18px 16px;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.nt-pf-card > h3 {
+    margin-bottom: 14px;
+    font-size: 16px;
+    color: var(--text);
+}
+
+.nt-pf-nodata {
+    text-align: center;
+}
+
+.nt-pf-nodata p {
+    margin-bottom: 14px;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.9;
+}
+
+.nt-pf-best {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.nt-pf-best small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.nt-pf-best h3 {
+    margin: 2px 0;
+    font-size: 18px;
+    color: var(--gold);
+}
+
+.nt-pf-best span:not(.nt-pf-ravatar) {
+    color: var(--muted);
+    font-size: 12.5px;
+}
+
+.nt-pf-ravatar {
+    position: relative;
+
+    width: 40px;
+    height: 40px;
+    flex: none;
+
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+
+    background: var(--card-light);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+
+    color: var(--gold);
+    font-weight: 800;
+}
+
+.nt-pf-ravatar b {
+    font-size: 16px;
+}
+
+.nt-pf-ravatar img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.nt-pf-ravatar-big {
+    width: 64px;
+    height: 64px;
+    border: 2px solid var(--gold);
+}
+
+.nt-pf-ravatar-big b {
+    font-size: 26px;
+}
+
+.nt-pf-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nt-pf-row + .nt-pf-row {
+    margin-top: 14px;
+}
+
+.nt-pf-rank {
+    width: 32px;
+    height: 32px;
+    flex: none;
+
+    display: grid;
+    place-items: center;
+
+    background: var(--card-light);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.nt-pf-row-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.nt-pf-row-top {
+    margin-bottom: 6px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.nt-pf-row-top strong {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 14px;
+    color: var(--text);
+}
+
+.nt-pf-row-top small {
+    flex: none;
+    color: var(--muted);
+    font-size: 11.5px;
+}
+
+.nt-pf-bar {
+    height: 6px;
+    overflow: hidden;
+
+    background: var(--card-light);
+    border-radius: 6px;
+}
+
+.nt-pf-bar i {
+    display: block;
+    height: 100%;
+
+    background: linear-gradient(270deg, var(--green), var(--gold));
+    border-radius: 6px;
+}
+
+.nt-pf-week {
+    height: 130px;
+
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.nt-pf-day {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.nt-pf-day-bar {
+    flex: 1;
+    width: 100%;
+
+    display: flex;
+    align-items: flex-end;
+}
+
+.nt-pf-day-bar i {
+    display: block;
+    width: 100%;
+
+    background: var(--green-dark);
+    border-radius: 6px 6px 3px 3px;
+}
+
+.nt-pf-day.is-today .nt-pf-day-bar i {
+    background: var(--gold);
+}
+
+.nt-pf-day span {
+    color: var(--muted);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.nt-pf-reset {
+    display: block;
+    margin: 8px auto 0;
+}

@@ -1,0 +1,620 @@
+/* =========================================================
+   REELS.CSS  —  نور التلاوة
+   =========================================================
+   ستايلات سكشن "مقتطفات" (فيديوهات قصيرة بتنزل زي الريلز).
+   كل الكلاسات nt-reel* جديدة، ولازم يتحمّل بعد pages.css.
+   الشاشة هنا غامقة دايمًا زي أي ريلز، حتى في الوضع الفاتح.
+========================================================= */
+
+
+/* لما الصفحة تتفتح: مفيش سكرول للصفحة نفسها، السكرول جوه الفيد بس */
+body.nt-reels-open {
+    overflow: hidden;
+}
+
+/* مشغّل القارئ بيختفي لو مش شغّال، عشان المقطع ياخد الشاشة كلها */
+body.nt-reels-open.nt-reels-hide-player .audio-player {
+    display: none;
+}
+
+.nt-reels-section {
+    padding: 0;
+    background: var(--bg);
+}
+
+body.nt-router main > section.nt-reels-section.nt-page-active {
+    padding-top: 0;
+}
+
+
+/* ---------------------------------------------------------
+   الإطار (ارتفاعه بيتحسب بالـ JS، دي قيمة احتياطية)
+--------------------------------------------------------- */
+
+.nt-reels-stage {
+    --nt-yt-w: 100%;
+
+    position: relative;
+
+    width: min(100%, 440px);
+    height: calc(100vh - 76px);
+    height: calc(100dvh - 76px);
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    background: #000;
+    color: #fff;
+}
+
+@media (min-width: 651px) {
+
+    .nt-reels-stage {
+        border-inline: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+}
+
+.nt-reels-feed {
+    position: relative;
+    height: 100%;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    scroll-snap-type: y mandatory;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+}
+
+.nt-reels-feed::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* ---------------------------------------------------------
+   المقطع الواحد
+--------------------------------------------------------- */
+
+.nt-reel {
+    position: relative;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: #000;
+
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.nt-reel[hidden] {
+    display: none;
+}
+
+.nt-reel-media {
+    position: absolute;
+    inset: 0;
+
+    background-color: #06100d;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* لحد ما الفيديو أو الصورة تبان */
+.nt-reel-media::before {
+    content: "🕌";
+
+    position: absolute;
+    inset: 0;
+
+    display: grid;
+    place-items: center;
+
+    font-size: 64px;
+    opacity: 0.12;
+}
+
+.nt-reel-video {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    background: #000;
+}
+
+.nt-reel-contain .nt-reel-video {
+    object-fit: contain;
+}
+
+/* مشغّل يوتيوب أفقي (16:9): بنكبّره ونقصّ الأطراف عشان الـ Short الرأسي يملا الشاشة */
+.nt-reel-yt {
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    width: var(--nt-yt-w);
+    height: 100%;
+
+    transform: translateX(-50%);
+    border: 0;
+
+    pointer-events: none;
+}
+
+.nt-reel-shade {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    background:
+        linear-gradient(to top, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0) 46%),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 20%);
+
+    pointer-events: none;
+}
+
+.nt-reel-tap {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ---------------------------------------------------------
+   أيقونات فوق المقطع (إيقاف مؤقت، قلب، تحميل)
+--------------------------------------------------------- */
+
+.nt-reel-flash {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+
+    width: 78px;
+    height: 78px;
+
+    display: grid;
+    place-items: center;
+
+    transform: translate(-50%, -50%);
+
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 50%;
+
+    font-size: 34px;
+    opacity: 0;
+
+    pointer-events: none;
+    transition: opacity 0.15s;
+}
+
+.nt-reel-flash::before {
+    content: "▶";
+    margin-inline-start: 4px;
+}
+
+.nt-reel.nt-paused .nt-reel-flash {
+    opacity: 1;
+}
+
+.nt-reel-heart {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+
+    font-size: 96px;
+    line-height: 1;
+
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.nt-reel-heart.nt-pop {
+    animation: ntReelPop 0.75s ease-out;
+}
+
+@keyframes ntReelPop {
+
+    0% {
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 0;
+    }
+
+    25% {
+        transform: translate(-50%, -50%) scale(1.15);
+        opacity: 1;
+    }
+
+    70% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -60%) scale(1);
+        opacity: 0;
+    }
+
+}
+
+.nt-reel-spin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+
+    width: 38px;
+    height: 38px;
+    margin: -19px 0 0 -19px;
+
+    display: none;
+
+    border: 3px solid rgba(255, 255, 255, 0.25);
+    border-top-color: var(--gold, #d5b46a);
+    border-radius: 50%;
+
+    pointer-events: none;
+    animation: ntReelSpin 0.8s linear infinite;
+}
+
+.nt-reel.nt-loading .nt-reel-spin {
+    display: block;
+}
+
+@keyframes ntReelSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+.nt-reel-fail {
+    position: absolute;
+    top: 50%;
+    right: 24px;
+    left: 24px;
+    z-index: 3;
+
+    display: none;
+
+    transform: translateY(-50%);
+
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.9;
+    color: #e8d9b0;
+
+    pointer-events: none;
+}
+
+.nt-reel.nt-failed .nt-reel-fail {
+    display: block;
+}
+
+
+/* ---------------------------------------------------------
+   الأزرار الجانبية (أعجبني / مشاركة)
+--------------------------------------------------------- */
+
+.nt-reel-actions {
+    position: absolute;
+    inset-inline-end: 10px;
+    bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+    z-index: 5;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.nt-reel-act {
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+
+    background: none;
+    border: none;
+
+    color: #fff;
+    font-family: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nt-reel-act b {
+    width: 46px;
+    height: 46px;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(0, 0, 0, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 50%;
+
+    font-size: 22px;
+    font-weight: 400;
+    transition: transform 0.15s;
+}
+
+.nt-reel-act:active b {
+    transform: scale(0.9);
+}
+
+.nt-reel-act span {
+    font-size: 11px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+
+/* ---------------------------------------------------------
+   معلومات المقطع
+--------------------------------------------------------- */
+
+.nt-reel-info {
+    position: absolute;
+    inset-inline: 14px 76px;
+    bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+    z-index: 4;
+
+    pointer-events: none;
+}
+
+.nt-reel-info h3 {
+    margin-bottom: 3px;
+
+    font-size: 17px;
+    line-height: 1.6;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.nt-reel-info small {
+    display: block;
+    margin-bottom: 4px;
+
+    font-size: 13px;
+    color: var(--gold, #d5b46a);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.nt-reel-info p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+
+    font-size: 14px;
+    line-height: 1.95;
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.nt-reel-bar {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+
+    height: 3px;
+
+    background: rgba(255, 255, 255, 0.18);
+
+    pointer-events: none;
+}
+
+.nt-reel-bar i {
+    display: block;
+    width: 0;
+    height: 100%;
+
+    background: var(--gold, #d5b46a);
+}
+
+
+/* ---------------------------------------------------------
+   الشريط العلوي + أسهم الكمبيوتر
+--------------------------------------------------------- */
+
+.nt-reels-top {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 6;
+
+    padding: 10px 12px 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+
+    pointer-events: none;
+}
+
+.nt-reels-top > * {
+    pointer-events: auto;
+}
+
+.nt-reels-title {
+    font-size: 16px;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.nt-reels-back {
+    padding: 8px 14px;
+
+    background: rgba(0, 0, 0, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 100px;
+
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.nt-reels-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(0, 0, 0, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 50%;
+
+    color: #fff;
+    font-family: inherit;
+    font-size: 17px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nt-reels-btn:hover {
+    border-color: var(--gold, #d5b46a);
+}
+
+.nt-reels-arrows {
+    display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+
+    .nt-reels-arrows {
+        position: absolute;
+        inset-inline-start: 10px;
+        top: 50%;
+        z-index: 6;
+
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        transform: translateY(-50%);
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   مفيش مقتطفات
+--------------------------------------------------------- */
+
+.nt-reels-empty-box {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+
+    display: none;
+    place-items: center;
+    padding: 30px;
+
+    text-align: center;
+    color: #cfd8d5;
+    line-height: 2;
+}
+
+.nt-reels-empty .nt-reels-empty-box {
+    display: grid;
+}
+
+.nt-reels-empty-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+}
+
+.nt-reels-empty-box small {
+    color: #91a09b;
+    font-size: 12.5px;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+    .nt-reel-heart.nt-pop,
+    .nt-reel-spin {
+        animation-duration: 0.01s;
+    }
+
+}
+
+/* مقاطع فيسبوك: المشغّل بياخد الإطار كله، واللمس بيروح له (للتشغيل والصوت) */
+.nt-reel-fb {
+    left: 0;
+    width: 100%;
+    transform: none;
+    pointer-events: auto;
+}
+
+.nt-reel-fbslide .nt-reel-tap {
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   وضع الشاشة الكاملة: المقطع ياخد الشاشة كلها (فوق النافبار)
+========================================================= */
+
+body.nt-reels-open .navbar,
+body.nt-reels-open .audio-player {
+    display: none !important;
+}
+
+body.nt-reels-open .nt-reels-stage {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1900;
+
+    /* موبايل: العرض كله. شاشة عريضة: عمود بنسبة 9:16 في النص */
+    width: min(100%, calc(100vh * 9 / 16));
+    width: min(100%, calc(100dvh * 9 / 16));
+    height: 100vh;
+    height: 100dvh;
+    margin: 0 auto;
+    border-inline: 0;
+}
+
+body.nt-reels-open .nt-reels-top {
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+}
+
+@media (min-width: 651px) {
+
+    body.nt-reels-open {
+        background: #000;
+    }
+
+    body.nt-reels-open .nt-reels-stage {
+        border-inline: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+}

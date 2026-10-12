@@ -1,0 +1,718 @@
+/* =========================================================
+   FEATURES.CSS
+   =========================================================
+   كل ستايلات المميزات الجديدة في ملف منفصل عن style.css،
+   عشان أي حاجة قديمة في التطبيق ما تتأثرش خالص. كل الكلاسات
+   هنا بتبدأ بـ nt- (اختصار نور التلاوة) فمفيش أي احتمال
+   تعارض مع الأسماء الموجودة.
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   حجم خط المصحف (متغير بيتحكم فيه المستخدم)
+--------------------------------------------------------- */
+
+.mushaf-page .ayahs {
+    font-size: calc(32px * var(--nt-mushaf-scale, 1));
+}
+
+
+/* ---------------------------------------------------------
+   وضع التسميع: بنخفي نص الآيات ونسيب أرقامها ظاهرة
+--------------------------------------------------------- */
+
+.nt-hide-text .ayah {
+    color: transparent !important;
+    text-shadow: none !important;
+    background: rgba(76, 175, 125, 0.06);
+    border-radius: 6px;
+}
+
+.nt-hide-text .ayah.nt-revealed {
+    color: inherit !important;
+    background: rgba(213, 180, 106, 0.12);
+}
+
+.nt-hide-text .ayah-number {
+    color: var(--gold) !important;
+}
+
+
+/* ---------------------------------------------------------
+   الزرار العائم اللي بيفتح صندوق الأدوات
+--------------------------------------------------------- */
+
+.nt-fab {
+    position: fixed;
+    inset-inline-end: 18px;
+    bottom: 150px;
+    z-index: 900;
+
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+
+    border: 1px solid var(--border);
+    background: linear-gradient(140deg, var(--green-dark), var(--green));
+    color: #fff;
+
+    font-size: 22px;
+    line-height: 1;
+
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.nt-fab:hover {
+    transform: scale(1.07);
+}
+
+.nt-fab.nt-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+}
+
+
+/* ---------------------------------------------------------
+   صندوق الأدوات (Bottom sheet)
+--------------------------------------------------------- */
+
+.nt-sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.nt-sheet-backdrop.nt-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.nt-sheet {
+    width: min(620px, 100%);
+    max-height: 86vh;
+
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 24px 24px 0 0;
+
+    display: flex;
+    flex-direction: column;
+
+    transform: translateY(20px);
+    transition: transform 0.25s ease;
+}
+
+.nt-sheet-backdrop.nt-open .nt-sheet {
+    transform: translateY(0);
+}
+
+.nt-sheet-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.nt-sheet-head h3 {
+    flex: 1;
+    font-size: 16px;
+    color: var(--gold);
+    margin: 0;
+}
+
+.nt-icon-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nt-icon-btn:hover {
+    border-color: var(--green);
+}
+
+.nt-sheet-body {
+    padding: 16px 18px 26px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* ---------------------------------------------------------
+   قائمة الأدوات الرئيسية
+--------------------------------------------------------- */
+
+.nt-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.nt-tool {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 13px 12px;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: start;
+
+    transition: 0.2s;
+}
+
+.nt-tool:hover {
+    border-color: var(--green);
+    transform: translateY(-2px);
+}
+
+.nt-tool span.nt-tool-icon {
+    font-size: 19px;
+    line-height: 1;
+}
+
+
+/* ---------------------------------------------------------
+   عناصر عامة جوه الصندوق
+--------------------------------------------------------- */
+
+.nt-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+}
+
+.nt-card h4 {
+    font-size: 14px;
+    margin: 0 0 8px;
+    color: var(--gold);
+}
+
+.nt-muted {
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.8;
+}
+
+.nt-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.nt-chip {
+    padding: 7px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--card-light);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nt-chip.nt-active {
+    background: var(--green-dark);
+    border-color: var(--green);
+    color: #fff;
+}
+
+.nt-btn {
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--card-light);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nt-btn:hover {
+    border-color: var(--green);
+}
+
+.nt-btn.nt-primary {
+    background: linear-gradient(140deg, var(--green-dark), var(--green));
+    border-color: transparent;
+    color: #fff;
+}
+
+.nt-btn.nt-danger {
+    border-color: rgba(220, 90, 90, 0.4);
+    color: #e58686;
+}
+
+.nt-input,
+.nt-select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--card-light);
+    color: var(--text);
+    font-size: 13.5px;
+}
+
+.nt-progress {
+    height: 8px;
+    border-radius: 8px;
+    background: var(--border);
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.nt-progress i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--gold));
+}
+
+.nt-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 11px 12px;
+    margin-bottom: 8px;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.nt-list-item .nt-list-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.nt-list-item strong {
+    display: block;
+    font-size: 13.5px;
+}
+
+.nt-empty {
+    text-align: center;
+    padding: 26px 10px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+
+/* ---------------------------------------------------------
+   قائمة الآية (بالضغط المطوّل)
+--------------------------------------------------------- */
+
+.nt-ayah-menu {
+    position: fixed;
+    z-index: 1300;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45);
+
+    padding: 6px;
+    min-width: 190px;
+
+    display: none;
+}
+
+.nt-ayah-menu.nt-open {
+    display: block;
+}
+
+.nt-ayah-menu button {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    width: 100%;
+    padding: 10px 12px;
+
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: start;
+}
+
+.nt-ayah-menu button:hover {
+    background: var(--card-light);
+}
+
+
+/* ---------------------------------------------------------
+   السبحة
+--------------------------------------------------------- */
+
+.nt-tasbeeh-count {
+    font-size: 56px;
+    font-weight: 800;
+    text-align: center;
+    color: var(--gold);
+    line-height: 1.2;
+}
+
+.nt-tasbeeh-tap {
+    width: 100%;
+    padding: 26px;
+    margin: 12px 0;
+
+    border-radius: 20px;
+    border: 1px dashed var(--green);
+    background: rgba(76, 175, 125, 0.08);
+
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.nt-tasbeeh-tap:active {
+    transform: scale(0.98);
+}
+
+
+/* ---------------------------------------------------------
+   القبلة
+--------------------------------------------------------- */
+
+.nt-compass {
+    width: 190px;
+    height: 190px;
+    margin: 14px auto;
+
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background:
+        radial-gradient(circle at 50% 50%, rgba(76, 175, 125, 0.10), transparent 70%);
+
+    position: relative;
+}
+
+.nt-compass-needle {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.25s ease;
+}
+
+.nt-compass-needle::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 16px;
+    transform: translateX(-50%);
+
+    width: 0;
+    height: 0;
+    border-inline-start: 11px solid transparent;
+    border-inline-end: 11px solid transparent;
+    border-bottom: 62px solid var(--gold);
+}
+
+.nt-compass-kaaba {
+    position: absolute;
+    left: 50%;
+    top: 4px;
+    transform: translateX(-50%);
+    font-size: 19px;
+}
+
+.nt-compass-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--green);
+}
+
+
+/* ---------------------------------------------------------
+   التسميع الذكي: عرض الآية بعد التأكد منها + تظليل الأحكام
+--------------------------------------------------------- */
+
+.nt-tasmee-ayah-text {
+    font-size: 22px;
+    line-height: 2.3;
+    text-align: justify;
+}
+
+.nt-tasmee-ayah-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    margin-inline-start: 4px;
+    border-radius: 50%;
+    background: var(--card-light);
+    color: var(--gold);
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+mark.nt-tw {
+    background: none;
+    padding: 0 1px;
+    border-radius: 2px;
+    border-bottom: 3px solid currentColor;
+}
+
+mark.nt-tw.nt-tw-ghunna { color: #4cafaf; }
+mark.nt-tw.nt-tw-qalqalah { color: #e0954a; }
+mark.nt-tw.nt-tw-noon { color: #9a84e0; }
+mark.nt-tw.nt-tw-madd { color: #d5b46a; }
+
+.nt-tasmee-legend {
+    margin-top: 12px;
+}
+
+.nt-tw-chip {
+    font-size: 11.5px;
+    padding: 5px 10px;
+    background: transparent;
+}
+
+.nt-tw-chip.nt-tw-ghunna { border-color: #4cafaf; color: #4cafaf; }
+.nt-tw-chip.nt-tw-qalqalah { border-color: #e0954a; color: #e0954a; }
+.nt-tw-chip.nt-tw-noon { border-color: #9a84e0; color: #9a84e0; }
+.nt-tw-chip.nt-tw-madd { border-color: #d5b46a; color: #d5b46a; }
+
+.nt-tasmee-error {
+    color: #e58686 !important;
+}
+
+
+/* ---------------------------------------------------------
+   تكبير مصحف صفحة "المصحف" على الشاشة كلها
+--------------------------------------------------------- */
+
+.nt-mushaf-wrap {
+    position: relative;
+}
+
+.nt-mushaf-expand-btn {
+    position: absolute;
+    top: 14px;
+    inset-inline-end: 14px;
+    z-index: 20;
+
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(10, 16, 15, 0.55);
+    border: 1px solid rgba(213, 180, 106, 0.35);
+    color: #d5b46a;
+
+    font-size: 16px;
+    line-height: 1;
+
+    backdrop-filter: blur(4px);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.nt-mushaf-expand-btn:hover {
+    background: rgba(10, 16, 15, 0.8);
+    transform: scale(1.06);
+}
+
+/*
+    لما الوضع الموسّع شغال: بنخفي أي حاجة تانية في الصفحة
+    (النافبار، عنوان القسم، أدوات اختيار السورة/القارئ، شريط
+    "السورة السابقة/التالية"...) وبنسيب مصحف صفحة "المصحف"
+    وحده ياخد طول وعرض الشاشة. شريط التشغيل اللي تحت (اسم
+    السورة، اسم الشيخ، التشغيل، التكرار) عنصر منفصل تمامًا
+    عن قسم المصحف، فمش متأثر خالص وفاضل ظاهر زي ما هو.
+*/
+
+body.nt-mushaf-full {
+    overflow: hidden;
+}
+
+body.nt-mushaf-full .navbar,
+body.nt-mushaf-full #mushaf .section-heading,
+body.nt-mushaf-full #mushaf .mushaf-controls,
+body.nt-mushaf-full #mushaf .mushaf-header,
+body.nt-mushaf-full #mushaf .highlight-status,
+body.nt-mushaf-full #mushaf .mushaf-navigation {
+    display: none !important;
+}
+
+body.nt-mushaf-full #mushaf.mushaf-section {
+    padding: 0;
+    border: none;
+}
+
+body.nt-mushaf-full #mushaf .container {
+    width: 100%;
+    margin: 0;
+}
+
+body.nt-mushaf-full .nt-mushaf-wrap {
+    position: fixed;
+    inset: 0;
+    z-index: 850;
+}
+
+body.nt-mushaf-full .mushaf-page {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    padding: 56px 24px calc(150px + env(safe-area-inset-bottom, 0px));
+}
+
+body.nt-mushaf-full .mushaf-page::before {
+    inset: 0;
+    border: none;
+}
+
+
+/* ---------------------------------------------------------
+   شاشات صغيرة
+--------------------------------------------------------- */
+
+@media (max-width: 650px) {
+
+    /*
+        لازم يبقى بنفس نقطة الكسر (650px) وبنفس المقاس (28px)
+        اللي في style.css، عشان شكل المصحف على الموبايل يفضل
+        زي ما هو بالظبط لما يكون المقياس = 1.
+    */
+    .mushaf-page .ayahs {
+        font-size: calc(28px * var(--nt-mushaf-scale, 1));
+    }
+
+    body.nt-mushaf-full .mushaf-page {
+        padding: 44px 16px calc(120px + env(safe-area-inset-bottom, 0px));
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .nt-fab {
+        bottom: 165px;
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    .nt-tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .nt-mushaf-expand-btn {
+        top: 10px;
+        inset-inline-end: 10px;
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   زرار إضافة سريعة لـ "قائمتي" فوق كارت السورة
+--------------------------------------------------------- */
+
+.nt-playlist-add {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--card-light);
+    color: var(--text);
+
+    font-size: 15px;
+    line-height: 1;
+
+    transition: 0.2s;
+}
+
+.nt-playlist-add:hover {
+    border-color: var(--green);
+}
+
+.nt-playlist-add.nt-added {
+    border-color: var(--green);
+    background: rgba(76, 175, 125, 0.18);
+    color: var(--green-light);
+}
+
+
+/* ---------------------------------------------------------
+   وضع تشغيل السور (بالترتيب / تكرار السورة / عشوائي)
+--------------------------------------------------------- */
+
+.player-controls .play-mode-btn.active {
+    background: rgba(213, 180, 106, 0.2);
+    color: var(--gold);
+}
+
+/* القبلة: لما الجهاز يبقى في اتجاه القبلة */
+.nt-compass.nt-qibla-ok {
+    border-color: var(--green);
+    box-shadow: 0 0 22px rgba(76, 175, 125, 0.35);
+}
+
+.nt-compass.nt-qibla-ok .nt-compass-needle::before {
+    border-bottom-color: var(--green-light);
+}

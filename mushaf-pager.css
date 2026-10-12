@@ -1,0 +1,317 @@
+/* =========================================================
+   MUSHAF-PAGER.CSS
+   =========================================================
+   ستايلات صفحات المصحف (سحب يمين/شمال) وعلامة السجدة.
+   إضافي فوق style.css و features.css و pages.css، ولازم
+   يتحمّل بعدهم. كل الكلاسات هنا جديدة (nt-pager / nt-mpage).
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   إطار المصحف في وضع الصفحات
+--------------------------------------------------------- */
+
+body .mushaf-page.nt-paged {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    scroll-snap-type: none;
+}
+
+.nt-pager {
+    flex: 1 1 0;
+    min-height: 0;
+
+    display: flex;
+    direction: rtl;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+}
+
+.nt-pager::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* ---------------------------------------------------------
+   الصفحة الواحدة
+--------------------------------------------------------- */
+
+.nt-mpage {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--green-dark) transparent;
+
+    /* ضل خفيف عند كعب الكتاب بين الصفحات */
+    box-shadow:
+        inset 14px 0 14px -16px rgba(120, 85, 25, 0.45),
+        inset -14px 0 14px -16px rgba(120, 85, 25, 0.45);
+}
+
+.nt-mpage:first-child {
+    box-shadow: inset 14px 0 14px -16px rgba(120, 85, 25, 0.45);
+}
+
+.nt-mpage:last-child {
+    box-shadow: inset -14px 0 14px -16px rgba(120, 85, 25, 0.45);
+}
+
+.nt-mpage:only-child {
+    box-shadow: none;
+}
+
+.nt-mpage-inner {
+    position: relative;
+    box-sizing: border-box;
+    min-height: 100%;
+
+    /* اليمين أوسع شوية عشان يشيل مربع "سجدة" في الهامش */
+    padding: 40px 82px 22px 96px;
+}
+
+.nt-mpage-head {
+    position: relative;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 22px;
+    padding-bottom: 8px;
+
+    border-bottom: 1px solid rgba(140, 99, 28, 0.25);
+
+    color: #8a7a5b;
+    font-family: "Amiri Quran", "Amiri", serif;
+    font-size: 17px;
+}
+
+.nt-mpage-foot {
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+
+    margin-top: 22px;
+}
+
+.nt-mpage-foot span {
+    min-width: 38px;
+    padding: 4px 12px;
+
+    border: 1px solid rgba(140, 99, 28, 0.45);
+    border-radius: 100px;
+
+    color: #805d1e;
+    font-family: "Amiri Quran", "Amiri", serif;
+    font-size: 17px;
+    text-align: center;
+}
+
+
+/* ---------------------------------------------------------
+   علامة سجدة التلاوة
+--------------------------------------------------------- */
+
+/* ۩ جوه نص الآية */
+.nt-sajda-sign {
+    color: #9a6b12;
+    font-size: 1.05em;
+    font-weight: 700;
+    margin: 0 2px;
+}
+
+/* مربع "سجدة" في هامش الصفحة */
+.nt-sajda-tag {
+    position: absolute;
+    right: 14px;
+
+    width: 40px;
+    padding: 3px 0 4px;
+    box-sizing: border-box;
+
+    transform: translateY(-50%);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.25;
+
+    background: rgba(213, 180, 106, 0.16);
+    border: 1px solid rgba(140, 99, 28, 0.65);
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 2px #f5edd9, inset 0 0 0 3px rgba(140, 99, 28, 0.35);
+
+    color: #805d1e;
+    font-family: "Amiri Quran", "Amiri", serif;
+
+    pointer-events: none;
+}
+
+.nt-sajda-tag b {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.nt-sajda-tag span {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* ---------------------------------------------------------
+   وضع ملء الشاشة (الحشو بيروح للصفحة نفسها)
+--------------------------------------------------------- */
+
+body.nt-mushaf-full .mushaf-page.nt-paged {
+    padding: 0;
+}
+
+body.nt-mushaf-full .mushaf-page.nt-paged .nt-mpage-inner {
+    padding-top: 56px;
+    padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px));
+}
+
+
+/* ---------------------------------------------------------
+   شاشات صغيرة
+--------------------------------------------------------- */
+
+@media (max-width: 650px) {
+
+    /*
+        الحشو من اليمين لازم يكون أكبر من عرض مربع "سجدة" + بُعده
+        عن الحافة (6 + 34 = 40)، وإلا النص بيدخل تحت المربع.
+        اليمين 48 يعني مسافة 8px بين المربع والكلام.
+    */
+    .nt-mpage-inner {
+        padding: 36px 48px 16px 18px;
+    }
+
+    .nt-mpage-head {
+        font-size: 15px;
+        margin-bottom: 16px;
+    }
+
+    .nt-sajda-tag {
+        right: 6px;
+        width: 34px;
+    }
+
+    .nt-sajda-tag b {
+        font-size: 15px;
+    }
+
+    .nt-sajda-tag span {
+        font-size: 11px;
+    }
+
+    body.nt-mushaf-full .mushaf-page.nt-paged .nt-mpage-inner {
+        padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+    }
+
+}
+
+
+/* =========================================================
+   وضوح التشكيل وعلامات المد والوقف
+   =========================================================
+   الهدف إن علامات التشكيل (الفتحة، المد، علامات الوقف...)
+   متتداخلش على بعض أو على الحروف:
+   - letter-spacing لازم يبقى صفر في النص العربي، لأن أي
+     مسافة بين الحروف بتبوّظ توصيل الحروف وتموضع العلامات.
+   - بنفعّل ميزات الخط المسؤولة عن تموضع العلامات (mark و
+     mkmk) وتركيب الحروف (ccmp) صراحةً.
+   - مسافة بين الكلمات أوسع شوية عشان علامات الوقف مياكلهاش
+     الكلمة اللي جنبها.
+   - ارتفاع السطر أكبر عشان علامات فوق السطر ما تلمسش اللي
+     فوقه، وعلامات تحت السطر ما تلمسش اللي تحته.
+========================================================= */
+
+.mushaf-page .ayahs,
+.mushaf-page .ayah,
+.mushaf-page .basmala,
+.nt-words,
+.nt-word,
+.nt-error-word {
+    letter-spacing: 0 !important;
+    font-kerning: normal;
+    font-synthesis: none;
+    font-variant-ligatures: common-ligatures contextual;
+    font-feature-settings: "ccmp" 1, "mark" 1, "mkmk" 1, "kern" 1, "calt" 1, "liga" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+.mushaf-page .ayahs {
+    word-spacing: 0.14em;
+    line-height: 2.6;
+}
+
+/* التوزيع على الطرفين بيوسّع المسافات بين الكلمات بس، مش جوه الكلمة */
+#ntTasmeeMushaf .ayahs,
+#ntMemoMushaf .ayahs {
+    text-justify: inter-word;
+}
+
+@media (max-width: 650px) {
+
+    .mushaf-page .ayahs {
+        line-height: 2.5;
+    }
+
+}
+
+
+/* مسافة صغيرة بعد علامة المد عشان متلمسش الحرف اللي بعدها */
+.nt-madd {
+    padding-inline-end: 0.16em;
+}
+
+
+/* ---------------------------------------------------------
+   السحب بالماوس
+--------------------------------------------------------- */
+
+@media (hover: hover) and (pointer: fine) {
+
+    .nt-pager.nt-draggable {
+        cursor: grab;
+    }
+
+    .nt-pager.nt-dragging {
+        cursor: grabbing;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .nt-pager.nt-dragging .ayah {
+        pointer-events: none;
+    }
+
+}
+
+
+/* آيات صفحة معاينة السورة المجاورة (nt-pv) بتتصرف زي .ayah في وضع التسميع */
+.nt-hide-text .nt-pv {
+    color: transparent !important;
+}

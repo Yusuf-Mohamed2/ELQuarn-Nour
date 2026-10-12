@@ -1,0 +1,228 @@
+/* =========================================================
+   TASMEE-DOCK.CSS  —  نور التلاوة
+   =========================================================
+   شريط التسميع الثابت على الموبايل. كل الكلاسات nt-td-*.
+   مش بيظهر خالص على الشاشات الأكبر من 650px.
+========================================================= */
+
+.nt-td {
+    display: none;
+}
+
+@media (max-width: 650px) {
+
+    .nt-td:not([hidden]) {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1150;
+
+        max-height: 46vh;
+        max-height: 46dvh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+
+        padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        background: var(--bg-secondary, var(--card));
+        border-top: 2px solid var(--gold);
+        border-radius: 18px 18px 0 0;
+        box-shadow: 0 -12px 34px rgba(0, 0, 0, 0.45);
+    }
+
+    /* المصحف فوق الشريط: نسيب مساحة تحت عشان آخر الصفحة متتغطاش */
+    body.nt-td-on {
+        padding-bottom: calc(var(--nt-td-h, 0px) + 8px);
+    }
+
+    /* الصندوق المنزلق بيتخفى (المصحف يبان كله)، والشريط بدله */
+    body.nt-td-on .nt-sheet-backdrop {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    /* مفيش لزمة لتكرار نفس الكروت جوه الصفحة، الشريط بيعرضها */
+    body.nt-td-on .nt-error-card:not(.nt-td-err) {
+        display: none;
+    }
+
+    body.nt-td-on .nt-card:has(#ntTasmeeProg) {
+        display: none;
+    }
+
+    body.nt-td-on .nt-row:has(#ntTasmeeRetry) {
+        display: none;
+    }
+
+    body.nt-td-on .nt-fab {
+        display: none !important;
+    }
+
+}
+
+.nt-td-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nt-td-chip {
+    flex: none;
+    padding: 3px 10px;
+
+    background: var(--card-light, var(--card));
+    border: 1px solid var(--gold);
+    border-radius: 100px;
+
+    color: var(--gold);
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.nt-td-prog {
+    flex: 1;
+    height: 7px;
+    overflow: hidden;
+
+    background: var(--card-light, var(--card));
+    border-radius: 7px;
+}
+
+.nt-td-prog i {
+    display: block;
+    width: 0;
+    height: 100%;
+
+    background: linear-gradient(270deg, var(--green), var(--gold));
+    border-radius: 7px;
+    transition: width 0.25s;
+}
+
+.nt-td-min {
+    width: 32px;
+    height: 32px;
+    flex: none;
+
+    display: grid;
+    place-items: center;
+
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.nt-td-status {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.7;
+}
+
+.nt-td-status.is-error {
+    color: #e58686;
+}
+
+.nt-td-error[hidden] {
+    display: none;
+}
+
+.nt-td-err {
+    padding: 10px 12px;
+
+    background: rgba(220, 90, 90, 0.10);
+    border: 1px solid rgba(220, 90, 90, 0.5);
+    border-radius: 14px;
+
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.nt-td-err h4 {
+    margin: 0 0 4px;
+
+    color: #e58686;
+    font-size: 14px;
+}
+
+.nt-td-err .nt-error-word {
+    margin: 2px 0 4px;
+
+    font-size: 26px;
+    line-height: 1.9;
+    text-align: center;
+}
+
+.nt-td-err .nt-muted {
+    margin-top: 4px !important;
+
+    color: var(--text);
+    font-size: 12.5px;
+}
+
+.nt-td-err .nt-row {
+    margin-top: 6px !important;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.nt-td-actions {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.nt-td-actions button {
+    padding: 8px 4px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+
+    background: var(--card-light, var(--card));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    color: var(--text);
+    font-family: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+}
+
+.nt-td-actions button b {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+.nt-td-actions button:active {
+    border-color: var(--green);
+}
+
+.nt-td-actions .is-stop {
+    border-color: rgba(220, 90, 90, 0.55);
+    color: #e58686;
+}
+
+/* مصغّر: الشريط + الغلطة (العنوان والكلمة) بس */
+.nt-td.is-min .nt-td-actions,
+.nt-td.is-min .nt-td-err .nt-muted,
+.nt-td.is-min .nt-td-err .nt-row {
+    display: none;
+}

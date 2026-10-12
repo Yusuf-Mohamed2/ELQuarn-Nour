@@ -1,0 +1,389 @@
+/* =========================================================
+   NOWPLAYING.CSS  —  شاشة "يتم التشغيل الآن"
+========================================================= */
+
+.now-playing.nt-np-trigger {
+    cursor: pointer;
+}
+
+.now-playing.nt-np-trigger:hover .mini-cover {
+    border-color: var(--gold);
+}
+
+body.nt-np-lock {
+    overflow: hidden;
+}
+
+.nt-np {
+    position: fixed;
+    inset: 0;
+    z-index: 1500;
+
+    display: flex;
+    flex-direction: column;
+
+    height: 100vh;
+    height: 100dvh;
+
+    background:
+        radial-gradient(circle at 50% 0%, rgba(76, 175, 125, 0.16), transparent 55%),
+        #0a100f;
+
+    color: #f3f5f4;
+
+    /* ثابتة غامقة زي الشريط، بغض النظر عن الوضع الفاتح */
+    --card: #111d1a;
+    --card-light: #15231f;
+    --border: rgba(255, 255, 255, 0.1);
+    --muted: #91a09b;
+    --gold: #d5b46a;
+
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.nt-np[hidden] {
+    display: none;
+}
+
+.nt-np.nt-np-open {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.nt-np-top {
+    flex: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 16px;
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+}
+
+.nt-np-top-title {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.nt-np-close,
+.nt-np-top-spacer {
+    width: 40px;
+    height: 40px;
+}
+
+.nt-np-close {
+    display: grid;
+    place-items: center;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+
+    color: #f3f5f4;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.nt-np-body {
+    flex: 1;
+    min-height: 0;
+
+    width: min(720px, 100%);
+    margin: 0 auto;
+    padding: 6px 18px 10px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nt-np-head {
+    flex: none;
+
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nt-np-cover {
+    width: 96px;
+    height: 96px;
+    flex: none;
+
+    display: grid;
+    place-items: center;
+
+    overflow: hidden;
+
+    background: var(--card);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+
+    font-size: 38px;
+    color: var(--gold);
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.nt-np-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.nt-np-titles {
+    min-width: 0;
+}
+
+.nt-np-reader {
+    font-size: 21px;
+    line-height: 1.4;
+    color: #fff;
+}
+
+.nt-np-surah {
+    margin-top: 2px;
+    color: var(--gold);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.nt-np-ayah-card {
+    flex: 1;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.nt-np-ayah-meta {
+    flex: none;
+
+    padding: 12px 18px 0;
+
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+.nt-np-ayah-scroll {
+    flex: 1;
+    min-height: 0;
+
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    display: flex;
+}
+
+.nt-np-ayah-text {
+    margin: auto;
+    padding: 16px 20px 22px;
+
+    direction: rtl;
+    text-align: center;
+
+    font-family: "Amiri Quran", "Amiri", "Times New Roman", serif;
+    font-size: 30px;
+    line-height: 2.3;
+    letter-spacing: 0;
+    word-spacing: 0.14em;
+
+    color: #f5f2e8;
+
+    font-feature-settings: "ccmp" 1, "mark" 1, "mkmk" 1, "kern" 1, "calt" 1, "liga" 1;
+}
+
+.nt-np-ayah-text.nt-np-hint {
+    font-family: "Cairo", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--muted);
+}
+
+.nt-np-ayah-text.nt-np-fade {
+    animation: ntNpFade 0.45s ease;
+}
+
+@keyframes ntNpFade {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.nt-np-ayah-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid rgba(213, 180, 106, 0.6);
+    border-radius: 50%;
+
+    color: #e9d19c;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.nt-np-bottom {
+    flex: none;
+
+    width: min(720px, 100%);
+    margin: 0 auto;
+    padding: 8px 18px;
+    padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+}
+
+.nt-np-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nt-np-time {
+    min-width: 40px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.nt-np-seek {
+    flex: 1;
+    height: 5px;
+    cursor: pointer;
+    accent-color: var(--green-light, #71d39e);
+}
+
+.nt-np-controls {
+    margin-top: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+}
+
+.nt-np-extras {
+    margin-top: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+}
+
+.nt-np-btn {
+    width: 52px;
+    height: 52px;
+
+    display: grid;
+    place-items: center;
+
+    background: var(--card-light);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+
+    color: #f3f5f4;
+    font-size: 20px;
+
+    transition: 0.2s;
+}
+
+.nt-np-btn:hover {
+    border-color: var(--green, #4caf7d);
+}
+
+.nt-np-btn:disabled {
+    opacity: 0.5;
+}
+
+.nt-np-play {
+    width: 68px;
+    height: 68px;
+
+    background: var(--green, #4caf7d);
+    border-color: transparent;
+
+    color: #06100b;
+    font-size: 26px;
+}
+
+.nt-np-small {
+    width: 44px;
+    height: 44px;
+    font-size: 17px;
+}
+
+.nt-np-btn.nt-np-active {
+    background: rgba(213, 180, 106, 0.2);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+@media (max-width: 650px) {
+
+    .nt-np-head {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .nt-np-cover {
+        width: 92px;
+        height: 92px;
+    }
+
+    .nt-np-reader {
+        font-size: 19px;
+    }
+
+    .nt-np-ayah-text {
+        font-size: 26px;
+        line-height: 2.2;
+        padding: 12px 14px 18px;
+    }
+
+}
+
+@media (max-height: 640px) {
+
+    .nt-np-head {
+        flex-direction: row;
+        text-align: start;
+    }
+
+    .nt-np-cover {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+
+    .nt-np-play {
+        width: 56px;
+        height: 56px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .nt-np,
+    .nt-np-ayah-text.nt-np-fade {
+        transition: none;
+        animation: none;
+    }
+
+}

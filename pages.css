@@ -1,0 +1,472 @@
+/* =========================================================
+   PAGES.CSS
+   =========================================================
+   ستايلات "وضع الصفحات": التطبيق بقى كل قسم فيه صفحة
+   مستقلة بدل ما يكون الكل تحت بعضه في صفحة واحدة.
+
+   كل حاجة هنا زيادة فوق style.css و features.css، ومفيش
+   أي كلاس قديم اتغيّر، فالألوان والشكل زي ما هما بالظبط.
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   الراوتر: القسم النشط بس هو اللي بيبان
+--------------------------------------------------------- */
+
+body.nt-router main > section:not(.nt-page-active) {
+    display: none !important;
+}
+
+body.nt-router main > section.nt-page-active {
+    animation: ntPageIn 0.18s ease-out;
+}
+
+@keyframes ntPageIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    body.nt-router main > section.nt-page-active {
+        animation: none;
+    }
+
+}
+
+/*
+    الأقسام الداخلية بقت أول حاجة في الصفحة، فمفيش لزمة
+    للمسافة الكبيرة اللي كانت بتفصل بين الأقسام وهي تحت بعض.
+*/
+body.nt-router main > section.section.nt-page-active,
+body.nt-router main > section.mushaf-section.nt-page-active {
+    padding-top: 42px;
+}
+
+
+/* ---------------------------------------------------------
+   زرار الرجوع للرئيسية جوه كل صفحة
+--------------------------------------------------------- */
+
+.nt-back-row {
+    margin-bottom: 18px;
+}
+
+.nt-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 9px 15px;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.nt-back-btn:hover {
+    color: var(--text);
+    border-color: var(--green);
+}
+
+
+/* ---------------------------------------------------------
+   شبكة المميزات في الصفحة الرئيسية
+--------------------------------------------------------- */
+
+.nt-home-features {
+    padding: 70px 0 90px;
+    border-bottom: 1px solid var(--border);
+}
+
+.nt-group + .nt-group {
+    margin-top: 46px;
+}
+
+.nt-group-title {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+
+    margin-bottom: 18px;
+}
+
+.nt-group-title h2 {
+    font-size: 22px;
+    color: var(--gold);
+}
+
+.nt-group-title span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.nt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+    gap: 14px;
+    margin-bottom: 50px;
+}
+
+.nt-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    padding: 17px 16px;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+
+    color: var(--text);
+    font-family: inherit;
+    text-align: start;
+    text-decoration: none;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.nt-feature:hover {
+    border-color: var(--green);
+    transform: translateY(-3px);
+}
+
+.nt-feature-icon {
+    width: 44px;
+    height: 44px;
+    flex: none;
+
+    display: grid;
+    place-items: center;
+
+    background: var(--card-light);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+
+    font-size: 20px;
+}
+
+.nt-feature-text {
+    min-width: 0;
+}
+
+.nt-feature-text strong {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.nt-feature-text small {
+    display: block;
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.7;
+}
+
+
+/* ---------------------------------------------------------
+   الأدوات في قائمة الموبايل (البرجر)
+--------------------------------------------------------- */
+
+/*
+    القائمة بقى فيها الأقسام + كل الأدوات، فبنحدد لها أقصى
+    ارتفاع وتتمرر جواها بدل ما تطوّل الصفحة كلها.
+*/
+.mobile-nav.open {
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nt-nav-group-label {
+    padding: 12px 4px 6px;
+    margin-top: 6px;
+
+    border-top: 1px solid var(--border);
+
+    color: var(--gold);
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+
+/* ---------------------------------------------------------
+   صفحة الأداة
+--------------------------------------------------------- */
+
+#ntToolHost {
+    max-width: 760px;
+    margin-inline: auto;
+}
+
+#ntToolHost .nt-card:last-child {
+    margin-bottom: 0;
+}
+
+
+/* ---------------------------------------------------------
+   صفحة التسميع
+--------------------------------------------------------- */
+
+.nt-tasmee-layout {
+    display: grid;
+    grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
+    gap: 22px;
+    align-items: start;
+}
+
+/*
+    عناصر الـ grid لازم min-width:0 وإلا النص الطويل جوه المصحف
+    بيوسّع العمود أكبر من الشاشة (ده كان سبب العرض الزايد).
+*/
+.nt-tasmee-layout > * {
+    min-width: 0;
+    max-width: 100%;
+}
+
+#ntTasmeeHost {
+    position: sticky;
+    top: 96px;
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
+}
+
+#ntTasmeeMushaf {
+    width: 100%;
+    min-height: 520px;
+    max-height: 640px;
+    margin: 0;
+}
+
+#ntTasmeeMushaf .ayahs {
+    text-align: justify;
+    text-align-last: center;
+}
+
+.nt-tasmee-hint {
+    text-align: center;
+    color: #8a7a5b;
+    font-family: "Amiri Quran", "Amiri", serif;
+    font-size: 19px;
+    padding: 40px 10px;
+}
+
+
+/* ---------------------------------------------------------
+   وضع الحفظ: المصحف المستقل بتاعه، تحت لوحة التحكم مباشرة
+--------------------------------------------------------- */
+
+#ntMemoMushaf {
+    width: 100%;
+    min-height: 420px;
+    max-height: 600px;
+}
+
+#ntMemoMushaf .ayahs {
+    text-align: justify;
+    text-align-last: center;
+}
+
+
+/* ---------------------------------------------------------
+   تقدّم التسميع كلمة بكلمة
+--------------------------------------------------------- */
+
+.nt-words {
+    direction: rtl;
+    line-height: 2.4;
+    font-family: "Amiri Quran", "Amiri", serif;
+    font-size: 21px;
+}
+
+.nt-word {
+    padding: 1px 4px;
+    border-radius: 6px;
+}
+
+.nt-word-done {
+    color: var(--green-light);
+}
+
+.nt-word-now {
+    background: rgba(213, 180, 106, 0.18);
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.nt-word-wrong {
+    background: rgba(220, 90, 90, 0.16);
+    color: #e58686;
+    box-shadow: inset 0 -3px 0 0 #e58686;
+}
+
+.nt-word-hidden {
+    color: var(--muted);
+    letter-spacing: 2px;
+    opacity: 0.55;
+}
+
+
+/* ---------------------------------------------------------
+   كارت الغلط (بيفضل ظاهر لحد ما الكلمة تتنطق صح)
+--------------------------------------------------------- */
+
+.nt-error-card {
+    border-color: rgba(220, 90, 90, 0.45);
+    background:
+        linear-gradient(180deg, rgba(220, 90, 90, 0.10), transparent 60%),
+        var(--card);
+}
+
+.nt-error-card h4 {
+    color: #e58686;
+}
+
+.nt-error-word {
+    margin-top: 6px;
+    padding: 10px 12px;
+
+    background: var(--card-light);
+    border: 1px dashed rgba(220, 90, 90, 0.45);
+    border-radius: 12px;
+
+    font-family: "Amiri Quran", "Amiri", serif;
+    font-size: 26px;
+    text-align: center;
+}
+
+
+/* ---------------------------------------------------------
+   شاشات صغيرة
+--------------------------------------------------------- */
+
+@media (max-width: 950px) {
+
+    .nt-tasmee-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    #ntTasmeeHost {
+        position: static;
+        max-height: none;
+    }
+
+    #ntTasmeeMushaf {
+        min-height: 380px;
+        max-height: 440px;
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .nt-home-features {
+        padding: 46px 0 70px;
+    }
+
+    body.nt-router main > section.section.nt-page-active,
+    body.nt-router main > section.mushaf-section.nt-page-active {
+        padding-top: 28px;
+    }
+
+    /* كارت واحد في كل صف على الموبايل */
+    .nt-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 11px;
+    }
+
+    .nt-feature {
+        padding: 15px 14px;
+        gap: 12px;
+    }
+
+    .nt-feature-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+        border-radius: 13px;
+    }
+
+    .nt-feature-text strong {
+        font-size: 14.5px;
+    }
+
+    .nt-feature-text small {
+        font-size: 12px;
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   الموبايل: مصحف التسميع ياخد عرض الشاشة بالظبط
+--------------------------------------------------------- */
+
+@media (max-width: 650px) {
+
+    .nt-tasmee-layout {
+        gap: 14px;
+    }
+
+    #ntTasmeeHost,
+    #ntTasmeeMushaf {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* الحشو الكبير بتاع المصحف العادي مش مناسب للتسميع على الموبايل */
+    #ntTasmeeMushaf:not(.nt-paged) {
+        padding: 30px 16px 36px;
+        height: auto;
+        min-height: 360px;
+        max-height: 460px;
+    }
+
+    #ntTasmeeMushaf .ayahs {
+        font-size: calc(24px * var(--nt-mushaf-scale, 1));
+        line-height: 2.4;
+        overflow-wrap: anywhere;
+    }
+
+    /* اليمين 46 عشان مربع "سجدة" (5 + 32 = 37) ميركبش على النص */
+    #ntTasmeeMushaf .nt-mpage-inner {
+        padding: 30px 46px 14px 14px;
+    }
+
+    #ntTasmeeMushaf .nt-sajda-tag {
+        right: 5px;
+        width: 32px;
+    }
+
+    .nt-words,
+    .nt-error-word {
+        overflow-wrap: anywhere;
+        max-width: 100%;
+    }
+
+}
+
+/* كلمات اتسمعت لسه ما اتأكدتش (بتظهر وإنت بتتكلم) */
+.nt-word-live {
+    color: var(--gold);
+    opacity: 0.85;
+}
+
+
+/* كلمة مش واضحة: لسه مش غلط مؤكد، بنطلب منه يقولها تاني */
+.nt-word-check {
+    background: rgba(213, 180, 106, 0.14);
+    color: var(--gold);
+    box-shadow: inset 0 -3px 0 0 var(--gold);
+}
